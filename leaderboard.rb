@@ -1,2 +1,0 @@
-puts "Welcome to leaderboards!"
-
