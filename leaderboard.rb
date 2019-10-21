@@ -1,1 +1,2 @@
-puts "hellllloooooo"
+puts "Welcome to leaderbksdj:oards!"
+
