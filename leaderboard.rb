@@ -1,1 +1,1 @@
-puts "Welcome to leaderboards!"
+puts "Welcome to leaderbksdj:oards!"
