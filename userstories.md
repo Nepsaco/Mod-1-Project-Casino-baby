@@ -17,6 +17,7 @@ exit game
 start game
 place initial bet
 get delt cards
+deck api logic
 see my cards
 see dealers card
 see my total 
