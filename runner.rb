@@ -1,5 +1,7 @@
 require_relative 'CLI'
 
-welcome 
-main_menu
-leaderboard 
+cli = Cli.new
+
+cli.welcome 
+
+cli.main_menu 
