@@ -36,6 +36,10 @@ class Cli
         if User.where(user_name: username)
             puts "Welcome back!"
             puts "Username: #{username.capitalize}, Balance: $#{balance}"
+        else 
+            puts "sorry you don't exist!"
+            main_menu
+        end 
     end 
 
 
