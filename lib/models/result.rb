@@ -1,4 +1,4 @@
 class Result < ActiveRecord::Base 
-    belongs_to :blackjacks
-    belongs_to :users 
+    belongs_to :blackjack
+    belongs_to :user
 end 
