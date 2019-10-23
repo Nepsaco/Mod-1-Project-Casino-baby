@@ -40,11 +40,12 @@ class Cli
         puts "Type in Username"
         username = gets.chomp 
         user = User.where(user_name: username.capitalize)
-        if user == true 
+        if user 
             @@current_user = user
             puts "Welcome back!"
             puts "Username: #{user[0].user_name}, Balance: $#{user[0].balance}"
         else
+            binding.pry 
             puts "sorry you don't exist! would you like to sign up? y/n"
             i = 1
             while i < 5
@@ -80,8 +81,25 @@ class Cli
         end 
     end 
     
-    def summary_page(current_user)
-        puts "Username: #{@@current_user.user_name.capitalize}, Balance: $#{self.balance}"
+    def summary_page
+        puts "Username: #{@@current_user.user_name.capitalize}, Balance: $#{@@current_user.balance}"
+        puts "back to main menu y/n"
+        i = 1
+        while i < 5
+            username1 = gets.chomp
+            if username1.downcase == "y" 
+                system("clear")
+                main_menu
+            elsif username1.downcase == "n"
+                puts "tough luck"
+                main_menu
+            else
+                puts "invalid input try again" 
+            end 
+            i += 1
+        end 
+        system("clear")
+        main_menu
         
     end
 
