@@ -2,11 +2,16 @@ require_relative './config/environment'
 require 'pry'
 
 class Cli 
+    attr_accessor :total
 
     @@current_user = nil 
     @@deck_id = nil 
     @@dealer_hand = []
     @@user_hand = [] 
+     
+    def initialize 
+        @total = []
+    end
 
     def welcome
         system("clear")
@@ -140,8 +145,10 @@ class Cli
         shuffle_deck
         deal_card
         initial_deal 
+        display_hand
+        binding.pry
+        display_dealer_hand
         score_in_hand
-        binding.pry 
     end
     
     def shuffle_deck
@@ -149,11 +156,12 @@ class Cli
         shuffle_j = JSON.parse(shuffle) 
         @@deck_id = shuffle_j["deck_id"]
     end
+    
     def deal_card
-        
         draw_a_card = RestClient.get("https://deckofcardsapi.com/api/deck/#{@@deck_id}/draw/?count=1")
         draw_cards_j = JSON.parse(draw_a_card)
     end 
+
     def initial_deal
         card = deal_card 
         @@user_hand << card["cards"][0]["code"] 
@@ -172,51 +180,95 @@ class Cli
     # def bust
 	
     # end
+    def numeric?(lookAhead)
+        lookAhead =~ /[[:digit:]]/
+      end
 
-    def score_in_hand
-        total = @@user_hand.reduce(0) do |sum, card|
+    def score_in_hand 
+        i = 0
+        # total = []
+        @@user_hand.reduce(0) do |sum, card|
+            first_character = card.split('').first
             binding.pry
-                case card
-                    when "2H"||"2S"||"2C"||"2D"
-                        sum + 2
-                    when "3H"||"3S"||"3C"||"3D"
-                        sum + 3
-                    when "4H"||"4S"||"4C"||"4D"
-                        sum + 4
-                    when "5H"||"5S"||"5C"||"5D"
-                        sum + 5
-                    when "6H"||"6S"||"6C"||"6D"
-                        sum + 6
-                    when "7H"||"7S"||"7C"||"7D"
-                        sum + 7
-                    when "8H"||"8S"||"8C"||"8D"
-                        sum + 8
-                    when "9H"||"9S"||"9C"||"9D"
-                        sum + 9
-                    when "10H"||"10S"||"10C"||"10D"
-                        sum + 10
-                    when "JH"||"JS"||"JC"||"JD"
-                        sum + 10
-                    when "QH"||"QS"||"QC"||"QD"
-                        sum + 10
-                    when "KH"||"KS"||"KC"||"KD"
-                        sum + 10
-                    when "AH"||"AS"||"AC"||"AD"
-                        sum + 1
-                end
+            if numeric?(first_character)
+                sum += first_character.to_i
+            else
+                face_cards = {"J" => 10, "Q" => 10, "K" => 10, "A" => 1}
+                sum += face_cards[first_character.to_s]
             end
-        total
+            
+        end
+        # while i < @@user_hand.length
+        #     case @@user_hand[i]
+        #         when "2H"||"2S"||"2C"||"2D" 
+        #             @total << 2
+        #             return @total
+        #         when "3H"||"3S"||"3C"||"3D" 
+        #             @total << 3
+        #             return @total
+        #         when "4H"||"4S"||"4C"||"4D" 
+        #             @total << 4
+        #             return @total
+        #         when "5H"||"5S"||"5C"||"5D" 
+        #             @total << 5
+        #             return @total
+        #         when "6H"||"6S"||"6C"||"6D" 
+        #             @total << 6
+        #             return @total
+        #         when "7H"||"7S"||"7C"||"7D" 
+        #             @total << 7
+        #             return @total
+        #         when "8H"||"8S"||"8C"||"8D" 
+        #             @total << 8
+        #             return @total
+        #         when "9H"||"9S"||"9C"||"9D" 
+        #             @total << 9
+        #             return @total
+        #         when "0H"||"0S"||"0C"||"0D" 
+        #             @total << 10
+        #             return @total
+        #         when "JH"||"JS"||"JC"||"JD" 
+        #             @total << 10
+        #             return @total
+        #         when "QH"||"QS"||"QC"||"QD" 
+        #             @total << 10
+        #             return @total
+        #         when "KH"||"KS"||"KC"||"KD" 
+        #             @total << 10
+        #             return @total
+        #         when "AH"||"AS"||"AC"||"AD" 
+        #             @total << 1
+        #             return @total
+        #     end
+        #             i += 1
+        # end
+        # binding.pry
+        # total
     end
-    cli = Cli.new
-a = cli.start_game
+    # binding.pry
 
-def display_hand
-    puts "#{@@user_hand}"
+    # def values
+        
+    # end
+  
+
+    def display_hand
+        i = 0
+        while i < @@user_hand.length
+            puts "#{@@user_hand[i]}"
+            i+= 1
+        end
+        card_total = score_in_hand
+        puts "Your Total is: #{card_total}"
     end
 
     def display_dealer_hand
-        puts "#{@@dealer_hand[1]}" 
-
+        i = 1
+        while i < @@dealer_hand.length
+            puts "#{@@dealer_hand[i]}" 
+            i +=1
+        end
+        puts ""
     end 
     
     # def set_bet
@@ -239,3 +291,6 @@ def display_hand
     # end
 
 end
+
+cli = Cli.new
+a = cli.start_game
