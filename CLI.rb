@@ -39,13 +39,7 @@ class Cli
         system("clear")
         puts "Type in Username"
         username = gets.chomp 
-        user = User.where(user_name: username.capitalize)
-        if user 
-            @@current_user = user
-            puts "Welcome back!"
-            puts "Username: #{user[0].user_name}, Balance: $#{user[0].balance}"
-        else
-            binding.pry 
+        if User.where(user_name: username.capitalize) == []
             puts "sorry you don't exist! would you like to sign up? y/n"
             i = 1
             while i < 5
@@ -60,24 +54,26 @@ class Cli
                     puts "invalid input try again" 
                 end 
                 i += 1
+		end
+        elseif User.where(user_name: username.capitalize)
+    		@@current_user = User.where(user_name: username.capitalize)
+		summary_page
             end 
             system("clear")
             main_menu
-        end 
     end 
 
 
     def sign_up 
         puts "Type in your first name."
         username = gets.chomp 
-        if username == User.where(user_name: username.capitalize) 
-            puts "Username already exists, try again." 
-            sign_up
-        else 
-            @@current_user = User.create(user_name: username.capitalize, balance: 1000)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-            # binding.pry
-            system('clear')
+        if  User.where(user_name: username.capitalize)==[] 
+	    @@current_user = User.create(user_name: username.capitalize, balance: 1000)
+	    system('clear')
             summary_page
+        else 
+            puts "Username already exists, try again." 
+            sign_up 
         end 
     end 
     
@@ -131,7 +127,46 @@ class Cli
         main_menu
     end 
 
+    def start_game
+	
+    end
 
-    # binding.pry
-    # 0 
+    def eval_hand_return_num(hand)
+	
+    end
+
+    def bust
+	
+    end
+
+    def score_in_hand
+
+    end
+
+    def display_hand
+
+    end
+
+    def display_dealer_hand
+
+    end
+    
+    def set_bet
+    end
+    def betting_time
+
+    end
+
+    def play_time
+
+    end
+
+    def hit
+    end
+
+    def stay
+    end
+
+    def quit
+    end
 end 
