@@ -39,6 +39,7 @@ class Cli
         system("clear")
         puts "Type in Username"
         username = gets.chomp 
+<<<<<<< HEAD
         user = User.where(user_name: username.capitalize)
         if user 
             # @@current_user = user
@@ -46,6 +47,9 @@ class Cli
             puts "Username: #{user[0].user_name}, Balance: $#{user[0].balance}"
         else
             # binding.pry 
+=======
+        if User.where(user_name: username.capitalize) == []
+>>>>>>> 9f98a8000f3b87198c53bb8be2e54779ac2118f1
             puts "sorry you don't exist! would you like to sign up? y/n"
             i = 1
             while i < 5
@@ -60,16 +64,20 @@ class Cli
                     puts "invalid input try again" 
                 end 
                 i += 1
-            end 
+            end
             system("clear")
             main_menu
-        end 
-    end 
+        else
+          @@current_user = User.where(user_name: username.capitalize).limit(1)
+	      summary_page
+        end
+      end 
 
 
     def sign_up 
         puts "Type in your first name."
         username = gets.chomp 
+<<<<<<< HEAD
         if username == User.where(user_name: username.capitalize) 
             puts "Username already exists, try again." 
             sign_up
@@ -101,6 +109,43 @@ class Cli
     #     end 
     #     system("clear")
     #     main_menu
+=======
+        if  User.where(user_name: username.capitalize)==[] 
+	    @@current_user = User.create(user_name: username.capitalize, balance: 1000)
+	    system('clear')
+            summary_page
+        else 
+            puts "Username already exists, try again." 
+            sign_up 
+        end 
+    end 
+    
+    def summary_page
+        system("clear")
+        puts "Username: #{@@current_user[0].user_name.capitalize}, Balance: $#{@@current_user[0].balance}"
+        puts ""
+        puts "To start game type y/n"
+        puts ""
+        puts "Type main menu to return"
+        i = 1
+        while i < 5
+            username1 = gets.chomp
+            if username1.downcase == "y" 
+                system("clear")
+                start_game               
+            elsif username1.downcase == "n"
+                summary_page
+            elsif username1 == "main menu" 
+                system("clear")
+                main_menu
+            else
+                puts "invalid input try again" 
+            end 
+            i += 1
+        end 
+        system("clear")
+        main_menu
+>>>>>>> 9f98a8000f3b87198c53bb8be2e54779ac2118f1
         
     # end
 
@@ -132,7 +177,50 @@ class Cli
         main_menu
     end 
 
+    def start_game
+	
+    end
 
-    # binding.pry
-    # 0 
-end 
+    def shuffle_deck
+
+    end
+    # def eval_hand_return_num(hand)
+	
+    # end
+
+    # def bust
+	
+    # end
+
+    # def score_in_hand
+
+    # end
+
+    # def display_hand
+
+    # end
+
+    # def display_dealer_hand
+
+    # end
+    
+    # def set_bet
+    # end
+    # def betting_time
+
+    # end
+
+    # def play_time
+
+    # end
+
+    # def hit
+    # end
+
+    # def stay
+    # end
+
+    # def quit
+    # end
+
+end
