@@ -27,7 +27,7 @@ class Cli
             when 3
             leaderboard    
             when 4
-                exit game
+                exit 
             else 
                 system("clear")
                 puts "Invalid input, try again" 
@@ -41,11 +41,11 @@ class Cli
         username = gets.chomp 
         user = User.where(user_name: username.capitalize)
         if user 
-            @@current_user = user
+            # @@current_user = user
             puts "Welcome back!"
             puts "Username: #{user[0].user_name}, Balance: $#{user[0].balance}"
         else
-            binding.pry 
+            # binding.pry 
             puts "sorry you don't exist! would you like to sign up? y/n"
             i = 1
             while i < 5
@@ -74,34 +74,35 @@ class Cli
             puts "Username already exists, try again." 
             sign_up
         else 
-            @@current_user = User.create(user_name: username.capitalize, balance: 1000)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+            @@current_user = User.create(user_name: username.capitalize, balance: 1000) 
+            sign_up                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
             # binding.pry
-            system('clear')
-            summary_page
+            # system('clear')
+            # summary_page
         end 
     end 
     
-    def summary_page
-        puts "Username: #{@@current_user.user_name.capitalize}, Balance: $#{@@current_user.balance}"
-        puts "back to main menu y/n"
-        i = 1
-        while i < 5
-            username1 = gets.chomp
-            if username1.downcase == "y" 
-                system("clear")
-                main_menu
-            elsif username1.downcase == "n"
-                puts "tough luck"
-                main_menu
-            else
-                puts "invalid input try again" 
-            end 
-            i += 1
-        end 
-        system("clear")
-        main_menu
+    # def summary_page
+    #     puts "Username: #{@@current_user.user_name.capitalize}, Balance: $#{@@current_user.balance}"
+    #     puts "back to main menu y/n"
+    #     i = 1
+    #     while i < 5
+    #         username1 = gets.chomp
+    #         if username1.downcase == "y" 
+    #             system("clear")
+    #             main_menu
+    #         elsif username1.downcase == "n"
+    #             puts "tough luck"
+    #             main_menu
+    #         else
+    #             puts "invalid input try again" 
+    #         end 
+    #         i += 1
+    #     end 
+    #     system("clear")
+    #     main_menu
         
-    end
+    # end
 
     def leaderboard 
         system("clear")
