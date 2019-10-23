@@ -91,8 +91,7 @@ class Cli
                 system("clear")
                 start_game               
             elsif username1.downcase == "n"
-                puts "tough luck"
-                main_menu
+                summary_page
             elsif username1 == "main menu" 
                 system("clear")
                 main_menu
@@ -138,6 +137,9 @@ class Cli
 	
     end
 
+    def shuffle_deck
+
+    end
     # def eval_hand_return_num(hand)
 	
     # end
