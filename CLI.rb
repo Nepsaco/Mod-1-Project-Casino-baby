@@ -4,6 +4,9 @@ require 'pry'
 class Cli 
 
     @@current_user = nil 
+    @@deck_id = nil 
+    @@dealer_hand = []
+    @@user_hand = [] 
 
     def welcome
         system("clear")
@@ -91,8 +94,7 @@ class Cli
                 system("clear")
                 start_game               
             elsif username1.downcase == "n"
-                puts "tough luck"
-                main_menu
+                summary_page
             elsif username1 == "main menu" 
                 system("clear")
                 main_menu
@@ -135,9 +137,34 @@ class Cli
     end 
 
     def start_game
-	
+        shuffle_deck
+        deal_card
+        initial_deal 
+        score_in_hand
+        binding.pry 
     end
-
+    
+    def shuffle_deck
+        shuffle = RestClient.get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=6')
+        shuffle_j = JSON.parse(shuffle) 
+        @@deck_id = shuffle_j["deck_id"]
+    end
+    def deal_card
+        
+        draw_a_card = RestClient.get("https://deckofcardsapi.com/api/deck/#{@@deck_id}/draw/?count=1")
+        draw_cards_j = JSON.parse(draw_a_card)
+    end 
+    def initial_deal
+        card = deal_card 
+        @@user_hand << card["cards"][0]["code"] 
+        card = deal_card
+        @@dealer_hand << card["cards"][0]["code"] 
+        card = deal_card
+        @@user_hand << card["cards"][0]["code"] 
+        card = deal_card
+        @@dealer_hand << card["cards"][0]["code"] 
+    end 
+    
     # def eval_hand_return_num(hand)
 	
     # end
@@ -146,17 +173,51 @@ class Cli
 	
     # end
 
-    # def score_in_hand
+    def score_in_hand
+        total = @@user_hand.reduce(0) do |sum, card|
+            binding.pry
+                case card
+                    when "2H"||"2S"||"2C"||"2D"
+                        sum + 2
+                    when "3H"||"3S"||"3C"||"3D"
+                        sum + 3
+                    when "4H"||"4S"||"4C"||"4D"
+                        sum + 4
+                    when "5H"||"5S"||"5C"||"5D"
+                        sum + 5
+                    when "6H"||"6S"||"6C"||"6D"
+                        sum + 6
+                    when "7H"||"7S"||"7C"||"7D"
+                        sum + 7
+                    when "8H"||"8S"||"8C"||"8D"
+                        sum + 8
+                    when "9H"||"9S"||"9C"||"9D"
+                        sum + 9
+                    when "10H"||"10S"||"10C"||"10D"
+                        sum + 10
+                    when "JH"||"JS"||"JC"||"JD"
+                        sum + 10
+                    when "QH"||"QS"||"QC"||"QD"
+                        sum + 10
+                    when "KH"||"KS"||"KC"||"KD"
+                        sum + 10
+                    when "AH"||"AS"||"AC"||"AD"
+                        sum + 1
+                end
+            end
+        total
+    end
+    cli = Cli.new
+a = cli.start_game
 
-    # end
+def display_hand
+    puts "#{@@user_hand}"
+    end
 
-    # def display_hand
+    def display_dealer_hand
+        puts "#{@@dealer_hand[1]}" 
 
-    # end
-
-    # def display_dealer_hand
-
-    # end
+    end 
     
     # def set_bet
     # end
