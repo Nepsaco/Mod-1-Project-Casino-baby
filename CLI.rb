@@ -27,7 +27,7 @@ class Cli
             when 3
             leaderboard    
             when 4
-                exit game
+                exit 
             else 
                 system("clear")
                 puts "Invalid input, try again" 
@@ -54,14 +54,14 @@ class Cli
                     puts "invalid input try again" 
                 end 
                 i += 1
-		end
-        elseif User.where(user_name: username.capitalize)
-    		@@current_user = User.where(user_name: username.capitalize)
-		summary_page
-            end 
+            end
             system("clear")
             main_menu
-    end 
+        else
+          @@current_user = User.where(user_name: username.capitalize).limit(1)
+	      summary_page
+        end
+      end 
 
 
     def sign_up 
@@ -78,16 +78,23 @@ class Cli
     end 
     
     def summary_page
-        puts "Username: #{@@current_user.user_name.capitalize}, Balance: $#{@@current_user.balance}"
-        puts "back to main menu y/n"
+        system("clear")
+        puts "Username: #{@@current_user[0].user_name.capitalize}, Balance: $#{@@current_user[0].balance}"
+        puts ""
+        puts "To start game type y/n"
+        puts ""
+        puts "Type main menu to return"
         i = 1
         while i < 5
             username1 = gets.chomp
             if username1.downcase == "y" 
                 system("clear")
-                main_menu
+                start_game               
             elsif username1.downcase == "n"
                 puts "tough luck"
+                main_menu
+            elsif username1 == "main menu" 
+                system("clear")
                 main_menu
             else
                 puts "invalid input try again" 
@@ -131,42 +138,43 @@ class Cli
 	
     end
 
-    def eval_hand_return_num(hand)
+    # def eval_hand_return_num(hand)
 	
-    end
+    # end
 
-    def bust
+    # def bust
 	
-    end
+    # end
 
-    def score_in_hand
+    # def score_in_hand
 
-    end
+    # end
 
-    def display_hand
+    # def display_hand
 
-    end
+    # end
 
-    def display_dealer_hand
+    # def display_dealer_hand
 
-    end
+    # end
     
-    def set_bet
-    end
-    def betting_time
+    # def set_bet
+    # end
+    # def betting_time
 
-    end
+    # end
 
-    def play_time
+    # def play_time
 
-    end
+    # end
 
-    def hit
-    end
+    # def hit
+    # end
 
-    def stay
-    end
+    # def stay
+    # end
 
-    def quit
-    end
-end 
+    # def quit
+    # end
+
+end
