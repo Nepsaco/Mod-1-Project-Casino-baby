@@ -277,6 +277,7 @@ class Cli
     end
 
         def bust 
+          system("clear")
          puts "you busted, you lost #{@@bet}"
          new_balance = @@current_user[0].balance
          puts "start a new game? y/n"
@@ -286,6 +287,7 @@ class Cli
              if user_input.downcase == "y" 
                  system("clear")
                  start_game 
+                 break
              elsif user_input.downcase == "n"
                  system("clear")
                  main_menu 
@@ -297,10 +299,8 @@ class Cli
         end 
       
      def user_turn
-        i = 0
         if score_in_hand(@@user_hand) < 21
         puts "Type hit for another card  or stay to pass"
-        while i < 5
           user_input = gets.chomp
           if user_input.downcase == "hit"
             hit(@@user_hand)
@@ -310,8 +310,7 @@ class Cli
             dealer_turn
           else
                 puts "invalid input try again" 
-                i += 1
-          end 
+                user_turn
         end      
         elsif score_in_hand(@@user_hand) == 21
           you_won_payout
@@ -321,7 +320,6 @@ class Cli
     end
         
     def dealer_turn
-      binding.pry
       if score_in_hand(@@dealer_hand) < 17 
         hit(@@dealer_hand) 
         display_dealer_hand
