@@ -3,6 +3,9 @@ require 'sqlite3'
 require 'require_all'
 require 'pry'
 require 'rest-client' 
+require "tty-table"
+require "figlet" 
+require 'colored' 
 
 require_all 'lib' 
 
