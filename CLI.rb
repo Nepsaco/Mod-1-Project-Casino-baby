@@ -142,9 +142,11 @@ class Cli
         deal_card
         initial_deal 
         display_user_hand
-        binding.pry
         display_dealer_hand
         score = score_in_hand(@@user_hand)
+        hit 
+        binding.pry
+        0
     end
    
     def shuffle_deck
@@ -181,67 +183,17 @@ class Cli
     end
 
     def score_in_hand(hand) 
-        # i = 0
-        # total = []
         hand.reduce(0) do |sum, card|
             first_character = card.split('').first
-            # binding.pry
             if numeric?(first_character)
                 sum += first_character.to_i
             else
                 face_cards = {"J" => 10, "Q" => 10, "K" => 10, "A" => 1}
                 sum += face_cards[first_character.to_s]
-            end
-            
+            end  
         end
-        # while i < @@user_hand.length
-        #     case @@user_hand[i]
-        #         when "2H"||"2S"||"2C"||"2D" 
-        #             @total << 2
-        #             return @total
-        #         when "3H"||"3S"||"3C"||"3D" 
-        #             @total << 3
-        #             return @total
-        #         when "4H"||"4S"||"4C"||"4D" 
-        #             @total << 4
-        #             return @total
-        #         when "5H"||"5S"||"5C"||"5D" 
-        #             @total << 5
-        #             return @total
-        #         when "6H"||"6S"||"6C"||"6D" 
-        #             @total << 6
-        #             return @total
-        #         when "7H"||"7S"||"7C"||"7D" 
-        #             @total << 7
-        #             return @total
-        #         when "8H"||"8S"||"8C"||"8D" 
-        #             @total << 8
-        #             return @total
-        #         when "9H"||"9S"||"9C"||"9D" 
-        #             @total << 9
-        #             return @total
-        #         when "0H"||"0S"||"0C"||"0D" 
-        #             @total << 10
-        #             return @total
-        #         when "JH"||"JS"||"JC"||"JD" 
-        #             @total << 10
-        #             return @total
-        #         when "QH"||"QS"||"QC"||"QD" 
-        #             @total << 10
-        #             return @total
-        #         when "KH"||"KS"||"KC"||"KD" 
-        #             @total << 10
-        #             return @total
-        #         when "AH"||"AS"||"AC"||"AD" 
-        #             @total << 1
-        #             return @total
-        #     end
-        #             i += 1
-        # end
-        # binding.pry
-        # total
     end
-    # binding.pry
+    
 
     # def values
         
@@ -269,6 +221,8 @@ class Cli
     
     # def set_bet
     # end
+
+
     # def betting_time
 
     # end
@@ -277,11 +231,30 @@ class Cli
 
     # end
 
-    # def hit
-    # end
+    def hit
+        i = 0
+        # draw_a_card = RestClient.get("https://deckofcardsapi.com/api/deck/#{@@deck_id}/draw/?count=1")
+        # draw_cards_j = JSON.parse(draw_a_card)
+        # face_cards = {"J" => 10, "Q" => 10, "K" => 10, "A" => 1}
+        # new_card = @@user_hand << draw_cards_j["cards"][0]["code"]
+        # card_nums = new_card.join(" ") 
 
-    # def stay
-    # end
+        new_card = deal_card["cards"][0]["code"]
+        new_hand = @@user_hand << new_card
+
+
+
+        # nums = card_nums.dump do |v| 
+        #     v =~ /[[:digits:]]/
+        # end 
+
+        i += 1
+        binding.pry 
+    end
+
+    def stay
+
+    end
 
     # def quit
     # end
