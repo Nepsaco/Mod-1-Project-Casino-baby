@@ -295,6 +295,26 @@ class Cli
     end
     # binding.pry 
 
-    
+        def bust 
+         puts "you busted, you lost #{@@bet}"
+         new_balance = @@current_user[0].balance
+         puts "start a new game? y/n"
+         i = 1
+         while i < 5
+             user_input = gets.chomp
+             if user_input.downcase == "y" 
+                 system("clear")
+                 start_game 
+             elsif user_input.downcase == "n"
+                 system("clear")
+                 main_menu 
+             else
+                 puts "invalid input try again" 
+             end 
+             i += 1
+         end 
+        end 
+        
+
 end
 
