@@ -48,7 +48,7 @@ class Cli
             i = 1
             while i < 5
                 username1 = gets.chomp
-                if username1 = "y"
+                if username1 == "y"
                     system("clear")
                     sign_up
                 elsif username1.downcase == "n"
