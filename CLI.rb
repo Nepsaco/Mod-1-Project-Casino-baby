@@ -6,8 +6,8 @@ class Cli
     @@current_user = nil 
     @@deck_id = nil 
     @@dealer_hand = []
-    @@user_hand = [] 
-     
+    @@user_hand = []
+    @@bet = nil
 
     def welcome
         system("clear")
@@ -138,15 +138,15 @@ class Cli
     end 
 
     def start_game
+        set_bet
+        system("clear")
         shuffle_deck
-        deal_card
-        initial_deal 
-        display_user_hand
+        initial_deal_user
+        initial_deal_dealer
         display_dealer_hand
-        score = score_in_hand(@@user_hand)
-        hit 
-        binding.pry
-        0
+        puts ""
+        display_user_hand
+        # binding.pry
     end
    
     def shuffle_deck
@@ -160,16 +160,23 @@ class Cli
         draw_cards_j = JSON.parse(draw_a_card)
     end 
 
-    def initial_deal
+    def initial_deal_user
         card = deal_card 
         @@user_hand << card["cards"][0]["code"] 
-        card = deal_card
-        @@dealer_hand << card["cards"][0]["code"] 
+        # card = deal_card
+        # @@dealer_hand << card["cards"][0]["code"] 
         card = deal_card
         @@user_hand << card["cards"][0]["code"] 
+        # card = deal_card
+        # @@dealer_hand << card["cards"][0]["code"] 
+    end 
+
+    def initial_deal_dealer
         card = deal_card
         @@dealer_hand << card["cards"][0]["code"] 
-    end 
+        card = deal_card
+        @@dealer_hand << card["cards"][0]["code"] 
+    end
     
     # def eval_hand_return_num(hand)
 	
@@ -186,21 +193,21 @@ class Cli
         hand.reduce(0) do |sum, card|
             first_character = card.split('').first
             if numeric?(first_character)
+              if first_character == "0"
+                sum += 10
+              else
                 sum += first_character.to_i
+              end
             else
                 face_cards = {"J" => 10, "Q" => 10, "K" => 10, "A" => 1}
                 sum += face_cards[first_character.to_s]
-            end  
+
+            end
         end
     end
-    
-
-    # def values
-        
-    # end
-  
 
     def display_user_hand
+        puts "Your Hand:"
         i = 0
         while i < @@user_hand.length
             puts "#{@@user_hand[i]}"
@@ -208,22 +215,50 @@ class Cli
         end
         card_total = score_in_hand(@@user_hand)
         puts "Your Total is: #{card_total}"
+        puts "Your Bet is: #{@@bet}"
     end
 
     def display_dealer_hand
+        puts "Dealer Hand:"
         i = 1
         while i < @@dealer_hand.length
             puts "#{@@dealer_hand[i]}" 
             i +=1
         end
-        puts ""
+        card_total = dealer_score_showing
+        puts "Dealer Total is: #{card_total}"
     end 
+
+    def dealer_score_showing
+      hand = @@dealer_hand.drop(1)
+      hand.reduce(0) do |sum, card|
+            first_character = card.split('').first
+            if numeric?(first_character)
+              if first_character == "0"
+                sum += 10
+              else
+                sum += first_character.to_i
+              end
+            else
+                face_cards = {"J" => 10, "Q" => 10, "K" => 10, "A" => 1}
+                sum += face_cards[first_character.to_s]
+            end
+        end
+    end
     
-    # def set_bet
-    # end
+    def set_bet
+      puts "Enter bet amount! You have #{@@current_user[0].balance} to spend."
+      user_input = gets.chomp
+      if user_input.to_i > 0 && user_input.to_i <= @@current_user[0].balance 
+        @@current_user[0].balance - user_input.to_i
+        @@bet = user_input.to_i
+      else
+        puts "invalid input try again" 
+        set_bet
+      end
+    end
 
-
-    # def betting_time
+  # def betting_time
 
     # end
 
@@ -232,24 +267,10 @@ class Cli
     # end
 
     def hit
-        i = 0
-        # draw_a_card = RestClient.get("https://deckofcardsapi.com/api/deck/#{@@deck_id}/draw/?count=1")
-        # draw_cards_j = JSON.parse(draw_a_card)
-        # face_cards = {"J" => 10, "Q" => 10, "K" => 10, "A" => 1}
-        # new_card = @@user_hand << draw_cards_j["cards"][0]["code"]
-        # card_nums = new_card.join(" ") 
 
         new_card = deal_card["cards"][0]["code"]
         new_hand = @@user_hand << new_card
-
-
-
-        # nums = card_nums.dump do |v| 
-        #     v =~ /[[:digits:]]/
-        # end 
-
-        i += 1
-        binding.pry 
+        display_user_hand
     end
 
     def stay
@@ -261,5 +282,3 @@ class Cli
 
 end
 
-cli = Cli.new
-a = cli.start_game
