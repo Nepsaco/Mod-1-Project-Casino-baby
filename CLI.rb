@@ -174,14 +174,7 @@ class Cli
         card = deal_card
         @@dealer_hand << card["cards"][0]["code"] 
     end
-    
-    # def eval_hand_return_num(hand)
-	
-    # end
 
-    # def bust
-	
-    # end
     def numeric?(lookAhead)
         lookAhead =~ /[[:digit:]]/
     end
@@ -255,14 +248,6 @@ class Cli
       end
     end
 
-  # def betting_time
-
-    # end
-
-    # def play_time
-
-    # end
-
     def hit
         new_card = deal_card["cards"][0]["code"]
         new_hand = @@user_hand << new_card
@@ -270,7 +255,48 @@ class Cli
         dealer_turn       
     end
 
-    def user_turn
+
+    def quit
+        if @@user[0].balance <= 0
+            system("clear")
+            puts "Sorry you're out of money!"
+            puts "back to main menu y/n"
+            i = 1
+            while i < 5
+                no_money = gets.chomp
+                if no_money.downcase == "y" 
+                    system("clear")
+                    main_menu
+                elsif no_money.downcase == "n"
+                    system("clear")
+                    leaderboard
+                else
+                    puts "invalid input try again" 
+                end 
+                i += 1
+            end 
+        end 
+        def bust 
+         puts "you busted, you lost #{@@bet}"
+         new_balance = @@current_user[0].balance
+         puts "start a new game? y/n"
+         i = 1
+         while i < 5
+             user_input = gets.chomp
+             if user_input.downcase == "y" 
+                 system("clear")
+                 start_game 
+             elsif user_input.downcase == "n"
+                 system("clear")
+                 main_menu 
+             else
+                 puts "invalid input try again" 
+             end 
+             i += 1
+         end 
+        end 
+      
+         def user_turn
         i = 0
         if score_in_hand(@@user_hand) < 21
         puts "Type hit for another card  or stay to pass"
@@ -292,7 +318,7 @@ class Cli
           bust
         end
     end
-
+        
     def dealer_turn
       if score_in_hand(@@dealer_hand) < 17 
         hit 
@@ -309,9 +335,6 @@ class Cli
         dealer_turn
       end
     end
-    # def quit
-    # end
-
 end
 # a = Cli.new
 # a.start_game
