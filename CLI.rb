@@ -249,10 +249,11 @@ class Cli
       end
     end
 
-    def hit
+    def hit(hand)
         new_card = deal_card["cards"][0]["code"]
-        new_hand = @@user_hand << new_card
-    end 
+        new_hand = hand << new_card
+    end
+
 
 
     def quit
@@ -275,7 +276,8 @@ class Cli
                 i += 1
             end 
         end 
-    end 
+    end
+
 
         def bust 
          puts "you busted, you lost #{@@bet}"
@@ -303,15 +305,16 @@ class Cli
             @@dealer_hand.clear 
         end 
       
-         def user_turn
+     def user_turn
         i = 0
         if score_in_hand(@@user_hand) < 21
         puts "Type hit for another card  or stay to pass"
-        user_input = gets.chomp
         while i < 5
+          user_input = gets.chomp
           if user_input.downcase == "hit"
-            hit
-            dealer_turn
+            hit(@@user_hand)
+            display_user_hand
+            user_turn
           elsif user_input.downcase == "stay"
             dealer_turn
           else
@@ -327,21 +330,22 @@ class Cli
     end
         
     def dealer_turn
+      binding.pry
       if score_in_hand(@@dealer_hand) < 17 
-        hit 
+        hit(@@dealer_hand) 
+        display_dealer_hand
       elsif score_in_hand(@@dealer_hand) >=17 && score_in_hand(@@dealer_hand) <= 21
-        stay
+        display_dealer_hand
       else
        dealer_bust_payout 
       end
     end
     
     def round 
-      if
         user_turn
         dealer_turn
-      end
     end
 end
 # a = Cli.new
 # a.start_game
+    
