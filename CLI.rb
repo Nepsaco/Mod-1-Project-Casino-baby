@@ -138,6 +138,7 @@ class Cli
     end 
 
     def start_game
+        clear_cards
         set_bet
         system("clear")
         shuffle_deck
@@ -251,9 +252,7 @@ class Cli
     def hit
         new_card = deal_card["cards"][0]["code"]
         new_hand = @@user_hand << new_card
-        display_user_hand
-        dealer_turn       
-    end
+    end 
 
 
     def quit
@@ -276,9 +275,12 @@ class Cli
                 i += 1
             end 
         end 
+    end 
+
         def bust 
          puts "you busted, you lost #{@@bet}"
-         new_balance = @@current_user[0].balance
+         new_balance = @@current_user[0].balance - @@bet 
+         @@current_user[0].balance = new_balance 
          puts "start a new game? y/n"
          i = 1
          while i < 5
@@ -294,6 +296,11 @@ class Cli
              end 
              i += 1
          end 
+        end 
+        
+        def clear_cards
+            @@user_hand.clear
+            @@dealer_hand.clear 
         end 
       
          def user_turn
