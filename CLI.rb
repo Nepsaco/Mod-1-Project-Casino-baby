@@ -141,12 +141,12 @@ class Cli
         shuffle_deck
         deal_card
         initial_deal 
-        display_hand
+        display_user_hand
         binding.pry
         display_dealer_hand
-        score = score_in_hand
+        score = score_in_hand(@@user_hand)
     end
-    
+   
     def shuffle_deck
         shuffle = RestClient.get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=6')
         shuffle_j = JSON.parse(shuffle) 
@@ -180,10 +180,10 @@ class Cli
         lookAhead =~ /[[:digit:]]/
     end
 
-    def score_in_hand 
+    def score_in_hand(hand) 
         # i = 0
         # total = []
-        @@user_hand.reduce(0) do |sum, card|
+        hand.reduce(0) do |sum, card|
             first_character = card.split('').first
             # binding.pry
             if numeric?(first_character)
@@ -248,13 +248,13 @@ class Cli
     # end
   
 
-    def display_hand
+    def display_user_hand
         i = 0
         while i < @@user_hand.length
             puts "#{@@user_hand[i]}"
             i+= 1
         end
-        card_total = score_in_hand
+        card_total = score_in_hand(@@user_hand)
         puts "Your Total is: #{card_total}"
     end
 
