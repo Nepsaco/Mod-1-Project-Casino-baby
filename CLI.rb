@@ -278,6 +278,7 @@ class Cli
         while i < 5
           if user_input.downcase == "hit"
             hit
+            dealer_turn
           elsif user_input.downcase == "stay"
             dealer_turn
           else
@@ -286,13 +287,27 @@ class Cli
           end 
         end      
         elsif score_in_hand(@@user_hand) == 21
-          payout
+          you_won_payout
         else
           bust
         end
     end
 
     def dealer_turn
+      if score_in_hand(@@dealer_hand) < 17 
+        hit 
+      elsif score_in_hand(@@dealer_hand) >=17 && score_in_hand(@@dealer_hand) <= 21
+        stay
+      else
+       dealer_bust_payout 
+      end
+    end
+    
+    def round 
+      if
+        user_turn
+        dealer_turn
+      end
     end
     # def quit
     # end
