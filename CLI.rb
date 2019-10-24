@@ -267,18 +267,34 @@ class Cli
     # end
 
     def hit
-
         new_card = deal_card["cards"][0]["code"]
         new_hand = @@user_hand << new_card
         display_user_hand
     end
 
-    def stay
-
+    def quit
+        if @@user[0].balance <= 0
+            system("clear")
+            puts "Sorry you're out of money!"
+            puts "back to main menu y/n"
+            i = 1
+            while i < 5
+                no_money = gets.chomp
+                if no_money.downcase == "y" 
+                    system("clear")
+                    main_menu
+                elsif no_money.downcase == "n"
+                    system("clear")
+                    leaderboard
+                else
+                    puts "invalid input try again" 
+                end 
+                i += 1
+            end 
+        end 
     end
+    # binding.pry 
 
-    # def quit
-    # end
-
+    
 end
 
