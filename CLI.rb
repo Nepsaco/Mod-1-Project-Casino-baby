@@ -8,6 +8,8 @@ class Cli
     @@dealer_hand = []
     @@user_hand = []
     @@bet = 0 
+    @@dealer_img = []
+    @@user_img= []
 
     def welcome
         system("clear")
@@ -155,7 +157,7 @@ class Cli
         puts ""
         display_user_hand
         user_turn
-        binding.pry
+        # binding.pry
     end
    
     def shuffle_deck
@@ -172,15 +174,20 @@ class Cli
     def initial_deal_user
         card = deal_card 
         @@user_hand << card["cards"][0]["code"] 
+        @@user_img << card["cards"][0]["image"]
         card = deal_card
         @@user_hand << card["cards"][0]["code"] 
+        @@user_img << card["cards"][0]["image"]
     end 
 
     def initial_deal_dealer
         card = deal_card
         @@dealer_hand << card["cards"][0]["code"] 
+        @@dealer_img << card["cards"][0]["image"]
         card = deal_card
         @@dealer_hand << card["cards"][0]["code"] 
+        @@dealer_img << card["cards"][0]["image"]
+
     end
 
     def numeric?(lookAhead)
@@ -208,7 +215,7 @@ class Cli
         puts "Your Hand:"
         i = 0
         while i < @@user_hand.length
-            puts "#{@@user_hand[i]}"
+          system("imgcat #{@@user_img[i]}")
             i+= 1
         end
         card_total = score_in_hand(@@user_hand)
@@ -220,7 +227,7 @@ class Cli
         puts "Dealer Hand:"
         i = 1
         while i < @@dealer_hand.length
-            puts "#{@@dealer_hand[i]}" 
+            system("imgcat #{@@dealer_img[i]}")
             i +=1
         end
         card_total = dealer_score_showing
@@ -231,7 +238,7 @@ class Cli
         puts "DealerHand:"
         i = 0
         while i < @@dealer_hand.length
-            puts "#{@@dealer_hand[i]}"
+            system("imgcat #{@@dealer_img[i]}")
             i+= 1
         end
         card_total = score_in_hand(@@dealer_hand)
@@ -273,6 +280,11 @@ class Cli
     def hit(hand)
         new_card = deal_card["cards"][0]["code"]
         new_hand = hand << new_card
+        if hand == @@user_hand
+          @@user_img << deal_card["cards"][0]["image"]
+        else
+          @@dealer_img << deal_card["cards"][0]["image"]
+        end
     end
 
 
@@ -360,7 +372,6 @@ class Cli
     def dealer_turn
       if score_in_hand(@@dealer_hand) < 17 
         hit(@@dealer_hand) 
-        display_dealer_hand
         dealer_turn
       elsif score_in_hand(@@dealer_hand) >=17 && score_in_hand(@@dealer_hand) <= 21
         display_final_dealer_hand
@@ -521,6 +532,7 @@ class Cli
       display_final_dealer_hand
       puts ""
       new_balance = @@current_user[0].balance - @@bet 
+
       puts ""
       puts "Your current balance is $#{@@current_user[0].balance}"
          @@current_user[0].balance = new_balance 
@@ -543,6 +555,11 @@ class Cli
          end
 
     end
+
+    # def find_index(card_string)
+      # @@user_hand.find_by(card_string)
+      # @@dealer_hand(card_string)
+    # end
 
     def round 
         user_turn
