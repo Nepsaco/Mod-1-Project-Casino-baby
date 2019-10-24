@@ -139,6 +139,7 @@ class Cli
 
     def start_game
         set_bet
+        system("clear")
         shuffle_deck
         initial_deal_user
         initial_deal_dealer
