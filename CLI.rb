@@ -51,9 +51,11 @@ class Cli
                 if username1 == "y"
                     system("clear")
                     sign_up
+                    break
                 elsif username1.downcase == "n"
                     system("clear") 
                     main_menu
+                    break
                 else
                     puts "invalid input try again" 
                 end 
@@ -70,10 +72,10 @@ class Cli
 
     def sign_up 
         puts "Type in your first name."
+        @@current_user = []
         username = gets.chomp 
         if  User.where(user_name: username.capitalize)==[] 
-	    @@current_user = User.create(user_name: username.capitalize, balance: 1000)
-	    system('clear')
+	    @@current_user << User.create(user_name: username.capitalize, balance: 1000)
             summary_page
         else 
             puts "Username already exists, try again." 
@@ -94,11 +96,14 @@ class Cli
             if username1.downcase == "y" 
                 system("clear")
                 start_game               
+                break
             elsif username1.downcase == "n"
                 summary_page
+                break
             elsif username1 == "main menu" 
                 system("clear")
                 main_menu
+                break
             else
                 puts "invalid input try again" 
             end 
@@ -126,8 +131,10 @@ class Cli
             if username1.downcase == "y" 
                 system("clear")
                 main_menu
+                break
             elsif username1.downcase == "n"
                 leaderboard
+                break
             else
                 puts "invalid input try again" 
             end 
@@ -220,6 +227,17 @@ class Cli
         puts "Dealer Total is: #{card_total}"
     end 
 
+    def display_final_dealer_hand
+        puts "DealerHand:"
+        i = 0
+        while i < @@dealer_hand.length
+            puts "#{@@dealer_hand[i]}"
+            i+= 1
+        end
+        card_total = score_in_hand(@@dealer_hand)
+        puts "Dealer Stays at: #{card_total}"
+    end
+
     def dealer_score_showing
       hand = @@dealer_hand.drop(1)
       hand.reduce(0) do |sum, card|
@@ -238,6 +256,9 @@ class Cli
     end
     
     def set_bet
+      if @@current_user[0].balance <= 0 
+        quit
+      end
       puts "Enter bet amount! You have #{@@current_user[0].balance} to spend."
       user_input = gets.chomp
       if user_input.to_i > 0 && user_input.to_i <= @@current_user[0].balance 
@@ -257,7 +278,7 @@ class Cli
 
 
     def quit
-        if @@user[0].balance <= 0
+        if @@current_user[0].balance <= 0
             system("clear")
             puts "Sorry you're out of money!"
             puts "back to main menu y/n"
@@ -267,9 +288,11 @@ class Cli
                 if no_money.downcase == "y" 
                     system("clear")
                     main_menu
+                    break
                 elsif no_money.downcase == "n"
                     system("clear")
                     leaderboard
+                    break
                 else
                     puts "invalid input try again" 
                 end 
@@ -280,9 +303,12 @@ class Cli
 
 
         def bust 
+          system("clear")
          puts "you busted, you lost #{@@bet}"
+         display_user_hand
          new_balance = @@current_user[0].balance - @@bet 
          @@current_user[0].balance = new_balance 
+         puts "Your current total is: $#{new_balance}"
          puts "start a new game? y/n"
          i = 1
          while i < 5
@@ -290,9 +316,11 @@ class Cli
              if user_input.downcase == "y" 
                  system("clear")
                  start_game 
+                 break
              elsif user_input.downcase == "n"
                  system("clear")
                  main_menu 
+                 break
              else
                  puts "invalid input try again" 
              end 
@@ -306,10 +334,11 @@ class Cli
         end 
       
      def user_turn
-        i = 0
+       if score_in_hand(@@dealer_hand) == 21
+        dealer_21
+       end
         if score_in_hand(@@user_hand) < 21
         puts "Type hit for another card  or stay to pass"
-        while i < 5
           user_input = gets.chomp
           if user_input.downcase == "hit"
             hit(@@user_hand)
@@ -319,28 +348,202 @@ class Cli
             dealer_turn
           else
                 puts "invalid input try again" 
-                i += 1
+                user_turn
           end 
-        end      
         elsif score_in_hand(@@user_hand) == 21
-          you_won_payout
+          user_21
         else
           bust
         end
     end
         
     def dealer_turn
-      binding.pry
       if score_in_hand(@@dealer_hand) < 17 
         hit(@@dealer_hand) 
         display_dealer_hand
+        dealer_turn
       elsif score_in_hand(@@dealer_hand) >=17 && score_in_hand(@@dealer_hand) <= 21
-        display_dealer_hand
+        display_final_dealer_hand
+        comparison_to_user
       else
+        display_final_dealer_hand
        dealer_bust_payout 
       end
     end
+
+    def dealer_bust_payout
+      system("clear")
+      puts "The deals is lame and sucks at blackjack so he busted"
+      @@current_user[0].balance += @@bet
+      puts ""
+      puts "You are rich and won $#{@@bet}. Your total balance is: $#{@@current_user[0].balance}" 
+      puts "start a new game? y/n"
+         i = 1
+         while i < 5
+             user_input = gets.chomp
+             if user_input.downcase == "y" 
+                 system("clear")
+                 start_game 
+                 break
+             elsif user_input.downcase == "n"
+                 system("clear")
+                 main_menu 
+                 break
+             else
+                 puts "invalid input try again" 
+             end 
+             i += 1
+         end
+    end
+
+    def you_won_payout
+      system("clear")
+      puts "YOU FUCKIN ROCK!"
+      display_user_hand
+      puts ""
+      display_final_dealer_hand
+      @@current_user[0].balance += @@bet
+      puts ""
+      puts "You won $#{@@bet}. Your total is $#{@@current_user[0].balance}"
+      puts ""
+      puts "start a new game? y/n"
+         i = 1
+         while i < 5
+             user_input = gets.chomp
+             if user_input.downcase == "y" 
+                 system("clear")
+                 start_game 
+                 break
+             elsif user_input.downcase == "n"
+                 system("clear")
+                 main_menu 
+                 break
+             else
+                 puts "invalid input try again" 
+             end 
+             i += 1
+         end
+    end
     
+    def comparison_to_user
+      if score_in_hand(@@user_hand) == score_in_hand(@@dealer_hand)
+        push
+      elsif score_in_hand(@@user_hand) > score_in_hand(@@dealer_hand)
+        you_won_payout
+      else
+        you_lost_loser
+      end
+    end
+
+    def push
+      system("clear")
+      puts "Your hands were the same you get your money back"
+      puts ""
+      puts "start a new game? y/n"
+         i = 1
+         while i < 5
+             user_input = gets.chomp
+             if user_input.downcase == "y" 
+                 system("clear")
+                 start_game 
+                 break
+             elsif user_input.downcase == "n"
+                 system("clear")
+                 main_menu 
+                 break
+             else
+                 puts "invalid input try again" 
+             end 
+             i += 1
+         end
+    end
+    
+    def you_lost_loser
+      system("clear")
+      puts "Better luck next time!"
+      display_final_dealer_hand
+      new_balance = @@current_user[0].balance - @@bet 
+      puts ""
+      puts "Your current balance is $#{@@current_user[0].balance}"
+         @@current_user[0].balance = new_balance 
+         puts "start a new game? y/n"
+         i = 1
+         while i < 5
+             user_input = gets.chomp
+             if user_input.downcase == "y" 
+                 system("clear")
+                 start_game 
+                 break
+             elsif user_input.downcase == "n"
+                 system("clear")
+                 main_menu 
+                 break
+             else
+                 puts "invalid input try again" 
+             end 
+             i += 1
+         end
+    end
+    
+    def user_21
+      system("clear")
+      puts "You got BLACKJACK!"
+      puts "You win double"
+      display_user_hand
+      puts ""
+      display_final_dealer_hand
+      @@current_user[0].balance += (@@bet*2)
+      puts ""
+      puts "You won $#{@@bet*2}. Your total is $#{@@current_user[0].balance}"
+      puts ""
+      puts "start a new game? y/n"
+         i = 1
+         while i < 5
+             user_input = gets.chomp
+             if user_input.downcase == "y" 
+                 system("clear")
+                 start_game 
+                 break
+             elsif user_input.downcase == "n"
+                 system("clear")
+                 main_menu 
+                 break
+             else
+                 puts "invalid input try again" 
+             end 
+             i += 1
+         end
+    end
+
+    def dealer_21
+      system("clear")
+      puts "Dealer so total pwned you"
+      display_final_dealer_hand
+      puts ""
+      new_balance = @@current_user[0].balance - @@bet 
+      puts ""
+      puts "Your current balance is $#{@@current_user[0].balance}"
+         @@current_user[0].balance = new_balance 
+         puts "start a new game? y/n"
+         i = 1
+         while i < 5
+             user_input = gets.chomp
+             if user_input.downcase == "y" 
+                 system("clear")
+                 start_game 
+                 break
+             elsif user_input.downcase == "n"
+                 system("clear")
+                 main_menu 
+                 break
+             else
+                 puts "invalid input try again" 
+             end 
+             i += 1
+         end
+
+    end
+
     def round 
         user_turn
         dealer_turn
