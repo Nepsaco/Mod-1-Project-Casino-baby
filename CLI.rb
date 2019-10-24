@@ -138,7 +138,7 @@ class Cli
     end
 
     def shuffle_deck
-
+      
     end
     # def eval_hand_return_num(hand)
 	
