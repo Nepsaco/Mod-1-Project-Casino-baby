@@ -7,7 +7,7 @@ class Cli
     @@deck_id = nil 
     @@dealer_hand = []
     @@user_hand = []
-    @@bet = nil
+    @@bet = 0 
 
     def welcome
         system("clear")
@@ -146,7 +146,8 @@ class Cli
         display_dealer_hand
         puts ""
         display_user_hand
-        # binding.pry
+        user_turn
+        binding.pry
     end
    
     def shuffle_deck
@@ -163,12 +164,8 @@ class Cli
     def initial_deal_user
         card = deal_card 
         @@user_hand << card["cards"][0]["code"] 
-        # card = deal_card
-        # @@dealer_hand << card["cards"][0]["code"] 
         card = deal_card
         @@user_hand << card["cards"][0]["code"] 
-        # card = deal_card
-        # @@dealer_hand << card["cards"][0]["code"] 
     end 
 
     def initial_deal_dealer
@@ -177,14 +174,7 @@ class Cli
         card = deal_card
         @@dealer_hand << card["cards"][0]["code"] 
     end
-    
-    # def eval_hand_return_num(hand)
-	
-    # end
 
-    # def bust
-	
-    # end
     def numeric?(lookAhead)
         lookAhead =~ /[[:digit:]]/
     end
@@ -250,7 +240,7 @@ class Cli
       puts "Enter bet amount! You have #{@@current_user[0].balance} to spend."
       user_input = gets.chomp
       if user_input.to_i > 0 && user_input.to_i <= @@current_user[0].balance 
-        @@current_user[0].balance - user_input.to_i
+        @@current_user[0].balance.to_i - user_input.to_i
         @@bet = user_input.to_i
       else
         puts "invalid input try again" 
@@ -258,19 +248,13 @@ class Cli
       end
     end
 
-  # def betting_time
-
-    # end
-
-    # def play_time
-
-    # end
-
     def hit
         new_card = deal_card["cards"][0]["code"]
         new_hand = @@user_hand << new_card
         display_user_hand
+        dealer_turn       
     end
+
 
     def quit
         if @@user[0].balance <= 0
@@ -292,9 +276,6 @@ class Cli
                 i += 1
             end 
         end 
-    end
-    # binding.pry 
-
         def bust 
          puts "you busted, you lost #{@@bet}"
          new_balance = @@current_user[0].balance
@@ -314,7 +295,46 @@ class Cli
              i += 1
          end 
         end 
+      
+         def user_turn
+        i = 0
+        if score_in_hand(@@user_hand) < 21
+        puts "Type hit for another card  or stay to pass"
+        user_input = gets.chomp
+        while i < 5
+          if user_input.downcase == "hit"
+            hit
+            dealer_turn
+          elsif user_input.downcase == "stay"
+            dealer_turn
+          else
+                puts "invalid input try again" 
+                i += 1
+          end 
+        end      
+        elsif score_in_hand(@@user_hand) == 21
+          you_won_payout
+        else
+          bust
+        end
+    end
         
-
+    def dealer_turn
+      if score_in_hand(@@dealer_hand) < 17 
+        hit 
+      elsif score_in_hand(@@dealer_hand) >=17 && score_in_hand(@@dealer_hand) <= 21
+        stay
+      else
+       dealer_bust_payout 
+      end
+    end
+    
+    def round 
+      if
+        user_turn
+        dealer_turn
+      end
+    end
 end
-
+# a = Cli.new
+# a.start_game
