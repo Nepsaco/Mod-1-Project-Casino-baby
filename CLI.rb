@@ -2,16 +2,12 @@ require_relative './config/environment'
 require 'pry'
 
 class Cli 
-    attr_accessor :total
 
     @@current_user = nil 
     @@deck_id = nil 
     @@dealer_hand = []
     @@user_hand = [] 
      
-    def initialize 
-        @total = []
-    end
 
     def welcome
         system("clear")
@@ -52,7 +48,7 @@ class Cli
             i = 1
             while i < 5
                 username1 = gets.chomp
-                if username1.downcase == "y" 
+                if username1 = "y"
                     system("clear")
                     sign_up
                 elsif username1.downcase == "n"
@@ -148,7 +144,7 @@ class Cli
         display_hand
         binding.pry
         display_dealer_hand
-        score_in_hand
+        score = score_in_hand
     end
     
     def shuffle_deck
@@ -182,14 +178,14 @@ class Cli
     # end
     def numeric?(lookAhead)
         lookAhead =~ /[[:digit:]]/
-      end
+    end
 
     def score_in_hand 
-        i = 0
+        # i = 0
         # total = []
         @@user_hand.reduce(0) do |sum, card|
             first_character = card.split('').first
-            binding.pry
+            # binding.pry
             if numeric?(first_character)
                 sum += first_character.to_i
             else
