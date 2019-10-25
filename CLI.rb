@@ -1,5 +1,6 @@
 require_relative './config/environment'
 require 'pry'
+require 'tty-prompt'
 
 class Cli 
 
@@ -13,16 +14,16 @@ class Cli
 
     def welcome
         system("clear")
-        puts "Welcome!"
-        puts "logo"
+        puts "Welcome!".green
+        puts "Blackjack".yellow
     end
 
     def main_menu
-        puts 'Pick an option'
-        puts '1. login'
-        puts '2. sign up'
-        puts '3. leaderboard'
-        puts '4. exit'
+      puts 'Pick an option'.red
+      puts '1. login'.green
+      puts '2. sign up'.green
+      puts '3. leaderboard'.green
+      puts '4. exit'.green
         user_input = gets.strip
         case user_input.to_i 
             when 1
@@ -36,17 +37,17 @@ class Cli
                 exit 
             else 
                 system("clear")
-                puts "Invalid input, try again" 
+                puts "Invalid input, try again".red 
                 main_menu
         end
     end
 
     def login 
         system("clear")
-        puts "Type in Username"
+        puts "Type in Username".green
         username = gets.chomp 
         if User.where(user_name: username.capitalize) == []
-            puts "sorry you don't exist! would you like to sign up? y/n"
+          puts "sorry you don't exist! would you like to sign up? y/n".green
             i = 1
             while i < 5
                 username1 = gets.chomp
@@ -59,7 +60,7 @@ class Cli
                     main_menu
                     break
                 else
-                    puts "invalid input try again" 
+                  puts "Invalid input try again".red 
                 end 
                 i += 1
             end
@@ -73,14 +74,14 @@ class Cli
 
 
     def sign_up 
-        puts "Type in your first name."
+      puts "Type in your first name.".green
         @@current_user = []
         username = gets.chomp 
         if  User.where(user_name: username.capitalize)==[] 
 	    @@current_user << User.create(user_name: username.capitalize, balance: 1000)
             summary_page
         else 
-            puts "Username already exists, try again." 
+          puts "Username already exists, try again.".green 
             sign_up 
         end 
     end 
@@ -89,9 +90,7 @@ class Cli
         system("clear")
         puts "Username: #{@@current_user[0].user_name.capitalize}, Balance: $#{@@current_user[0].balance}"
         puts ""
-        puts "To start game type y/n"
-        puts ""
-        puts "Type main menu to return"
+        puts "To start game type y/n".green
         i = 1
         while i < 5
             username1 = gets.chomp
@@ -100,14 +99,10 @@ class Cli
                 start_game               
                 break
             elsif username1.downcase == "n"
-                summary_page
-                break
-            elsif username1 == "main menu" 
-                system("clear")
                 main_menu
                 break
             else
-                puts "invalid input try again" 
+              puts "Invalid input try again".red 
             end 
             i += 1
         end 
@@ -117,6 +112,9 @@ class Cli
     end
 
     def leaderboard 
+        if @@current_user != []
+          @@current_user.update(balance: @@current_user[0].balance)
+        end
         system("clear")
         i = 1
         money_leaderboard = User.order(balance: :desc)
@@ -126,7 +124,7 @@ class Cli
         end
         puts ""
         puts ""
-        puts "back to main menu y/n"
+        puts "back to main menu y/n".green
         i = 1
         while i < 5
             username1 = gets.chomp
@@ -138,7 +136,7 @@ class Cli
                 leaderboard
                 break
             else
-                puts "invalid input try again" 
+              puts "Invalid input try again".red 
             end 
             i += 1
         end 
@@ -157,7 +155,6 @@ class Cli
         puts ""
         display_user_hand
         user_turn
-        # binding.pry
     end
    
     def shuffle_deck
@@ -219,12 +216,10 @@ class Cli
     def display_user_hand
         puts "Your Hand:"
         i = 0
-        system_string = ""
         while i < @@user_hand.length
         system("imgcat #{@@user_img[i]}")
             i+= 1
         end
-        system("#{system_string}")
         card_total = score_in_hand(@@user_hand)
         puts "Your Total is: #{card_total}"
         puts "Your Bet is: #{@@bet}"
@@ -271,7 +266,7 @@ class Cli
     
     def set_bet
       if @@current_user[0].balance <= 0 
-        quit
+        broke
       end
       puts "Enter bet amount! You have #{@@current_user[0].balance} to spend."
       user_input = gets.chomp
@@ -279,7 +274,7 @@ class Cli
         @@current_user[0].balance.to_i - user_input.to_i
         @@bet = user_input.to_i
       else
-        puts "invalid input try again" 
+        puts "Invalid input try again".red 
         set_bet
       end
     end
@@ -295,24 +290,25 @@ class Cli
     end
 
 
-    def quit
+    def broke
         if @@current_user[0].balance <= 0
             system("clear")
-            puts "Sorry you're out of money!"
-            puts "back to main menu y/n"
+            puts "Sorry you're out of money!".red
+            puts "beg for more money y/n".red
             i = 1
             while i < 5
                 no_money = gets.chomp
                 if no_money.downcase == "y" 
                     system("clear")
-                    main_menu
+                    @@current_user[0].balance += 1000
+                    summary_page
                     break
                 elsif no_money.downcase == "n"
                     system("clear")
-                    leaderboard
+                    main_menu
                     break
                 else
-                    puts "invalid input try again" 
+                  puts "Invalid input try again".red 
                 end 
                 i += 1
             end 
@@ -330,12 +326,12 @@ class Cli
           #  user_turn
          # end
          system("clear")
-         puts "you busted, you lost #{@@bet}"
+         puts "you busted, you lost #{@@bet}".red
          display_user_hand
          new_balance = @@current_user[0].balance - @@bet 
          @@current_user[0].balance = new_balance 
-         puts "Your current total is: $#{new_balance}"
-         puts "start a new game? y/n"
+         puts "Your current total is: $#{new_balance}".green
+         puts "start a new game? y/n".green
          i = 1
          while i < 5
              user_input = gets.chomp
@@ -348,7 +344,7 @@ class Cli
                  main_menu 
                  break
              else
-                 puts "invalid input try again" 
+               puts "Invalid input try again".red 
              end 
              i += 1
          end 
@@ -364,7 +360,7 @@ class Cli
         dealer_21
        end
         if score_in_hand(@@user_hand) < 21
-        puts "Type hit for another card  or stay to pass"
+          puts "Type hit for another card  or stay to pass".green
           user_input = gets.chomp
           if user_input.downcase == "hit"
             system("clear")
@@ -375,8 +371,8 @@ class Cli
           elsif user_input.downcase == "stay"
             dealer_turn
           else
-                puts "invalid input try again" 
-                user_turn
+            puts "Invalid input try again".red 
+              user_turn
           end 
         elsif score_in_hand(@@user_hand) == 21
           user_21
@@ -400,11 +396,11 @@ class Cli
     def dealer_bust_payout
       system("clear")
       display_final_dealer_hand
-      puts "The deals is lame and sucks at blackjack so he busted"
+      puts "The deals is lame and sucks at blackjack so he busted".green
       @@current_user[0].balance += @@bet
       puts ""
-      puts "You are rich and won $#{@@bet}. Your total balance is: $#{@@current_user[0].balance}" 
-      puts "start a new game? y/n"
+      puts "You are rich and won $#{@@bet}. Your total balance is: $#{@@current_user[0].balance}".green 
+      puts "start a new game? y/n".green
          i = 1
          while i < 5
              user_input = gets.chomp
@@ -417,7 +413,7 @@ class Cli
                  main_menu 
                  break
              else
-                 puts "invalid input try again" 
+               puts "Invalid input try again".red 
              end 
              i += 1
          end
@@ -425,15 +421,15 @@ class Cli
 
     def you_won_payout
       system("clear")
-      puts "YOU !"
+      puts "YOU ROCK!".yellow
       display_user_hand
       puts ""
       display_final_dealer_hand
       @@current_user[0].balance += @@bet
       puts ""
-      puts "You won $#{@@bet}. Your total is $#{@@current_user[0].balance}"
+      puts "You won $#{@@bet}. Your total is $#{@@current_user[0].balance}".green
       puts ""
-      puts "start a new game? y/n"
+      puts "start a new game? y/n".green
          i = 1
          while i < 5
              user_input = gets.chomp
@@ -446,7 +442,7 @@ class Cli
                  main_menu 
                  break
              else
-                 puts "invalid input try again" 
+               puts "Invalid input try again".red 
              end 
              i += 1
          end
@@ -464,9 +460,9 @@ class Cli
 
     def push
       system("clear")
-      puts "Your hands were the same you get your money back"
+      puts "Your hands were the same you get your money back".green
       puts ""
-      puts "start a new game? y/n"
+      puts "start a new game? y/n".green
          i = 1
          while i < 5
              user_input = gets.chomp
@@ -479,7 +475,7 @@ class Cli
                  main_menu 
                  break
              else
-                 puts "invalid input try again" 
+               puts "Invalid input try again".red 
              end 
              i += 1
          end
@@ -487,13 +483,13 @@ class Cli
     
     def you_lost_loser
       system("clear")
-      puts "Better luck next time!"
+      puts "Better luck next time!".yellow
       display_final_dealer_hand
       new_balance = @@current_user[0].balance - @@bet 
       puts ""
-      puts "Your current balance is $#{@@current_user[0].balance}"
+      puts "Your current balance is $#{@@current_user[0].balance}".green
          @@current_user[0].balance = new_balance 
-         puts "start a new game? y/n"
+         puts "start a new game? y/n".green
          i = 1
          while i < 5
              user_input = gets.chomp
@@ -506,7 +502,7 @@ class Cli
                  main_menu 
                  break
              else
-                 puts "invalid input try again" 
+               puts "Invalid input try again".red 
              end 
              i += 1
          end
@@ -514,16 +510,16 @@ class Cli
     
     def user_21
       system("clear")
-      puts "You got BLACKJACK!"
-      puts "You win double"
+      puts "You got BLACKJACK!".blue
+      puts "You win double".green
       display_user_hand
       puts ""
       display_final_dealer_hand
       @@current_user[0].balance += (@@bet*2)
       puts ""
-      puts "You won $#{@@bet*2}. Your total is $#{@@current_user[0].balance}"
+      puts "You won $#{@@bet*2}. Your total is $#{@@current_user[0].balance}".green
       puts ""
-      puts "start a new game? y/n"
+      puts "start a new game? y/n".green
          i = 1
          while i < 5
              user_input = gets.chomp
@@ -536,7 +532,7 @@ class Cli
                  main_menu 
                  break
              else
-                 puts "invalid input try again" 
+               puts "Invalid input try again".red 
              end 
              i += 1
          end
@@ -544,15 +540,14 @@ class Cli
 
     def dealer_21
       system("clear")
-      puts "Dealer so total pwned you"
+      puts "Dealer so total pwned you".red
       display_final_dealer_hand
       puts ""
       new_balance = @@current_user[0].balance - @@bet 
-
       puts ""
-      puts "Your current balance is $#{@@current_user[0].balance}"
+      puts "Your current balance is $#{@@current_user[0].balance}".green
          @@current_user[0].balance = new_balance 
-         puts "start a new game? y/n"
+         puts "start a new game? y/n".green
          i = 1
          while i < 5
              user_input = gets.chomp
@@ -565,7 +560,7 @@ class Cli
                  main_menu 
                  break
              else
-                 puts "invalid input try again" 
+               puts "Invalid input try again".red 
              end 
              i += 1
          end
@@ -582,6 +577,6 @@ class Cli
         dealer_turn
     end
 end
-a = Cli.new
-a.bust
-a.score_in_hand(@@user_hand)
+# a = Cli.new
+# a.bust
+# a.score_in_hand(@@user_hand)
