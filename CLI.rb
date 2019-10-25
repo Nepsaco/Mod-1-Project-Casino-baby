@@ -193,7 +193,7 @@ class Cli
     end
 
     def numeric?(lookAhead)
-        lookAhead =~ /[[:digit:]]/
+        lookAhead =~ /[[:digit:]]/ 
     end
 
     def score_in_hand(hand) 
@@ -205,14 +205,9 @@ class Cli
               else
                 sum += first_character.to_i
               end
-             # elsif first_character == "C"
-            #   binding.pry
-            #   sum -= 11
-            #   hand.pop
             else
                 face_cards = {"J" => 10, "Q" => 10, "K" => 10, "A" => 11}
                 sum += face_cards[first_character.to_s]
-
             end
         end
     end
@@ -263,7 +258,7 @@ class Cli
                 sum += first_character.to_i
               end
             else
-                face_cards = {"J" => 10, "Q" => 10, "K" => 10, "A" => 1}
+                face_cards = {"J" => 10, "Q" => 10, "K" => 10, "A" => 11}
                 sum += face_cards[first_character.to_s]
             end
         end
@@ -290,7 +285,6 @@ class Cli
         if hand == @@user_hand
           @@user_img << new_card["image"]
         elsif hand == @@dealer_hand
-
           @@dealer_img << new_card["image"]
         end
     end
@@ -360,6 +354,8 @@ class Cli
         def clear_cards
             @@user_hand.clear
             @@dealer_hand.clear 
+            @@user_img.clear
+            @@dealer_img.clear
         end 
       
      def user_turn
@@ -370,7 +366,6 @@ class Cli
         puts "Type hit for another card  or stay to pass".green
           user_input = gets.chomp
           if user_input.downcase == "hit"
-            system("clear")
             hit(@@user_hand)
             display_dealer_hand
             display_user_hand
@@ -386,7 +381,7 @@ class Cli
         else
           bust
         end
-    end
+     end
         
     def dealer_turn
       if score_in_hand(@@dealer_hand) < 17 
@@ -517,7 +512,6 @@ class Cli
     
     def user_21
       system("clear")
-
       puts "You got BLACKJACK!".blue 
       puts "You win double".green 
       display_user_hand
@@ -575,5 +569,4 @@ class Cli
          end
 
     end
-
 end
