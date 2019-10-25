@@ -2,6 +2,8 @@ require_relative './config/environment'
 require 'pry'
 require 'tty-prompt'
 
+prompt = TTY::Prompt.new
+
 class Cli 
 
     @@current_user = nil 
@@ -41,6 +43,11 @@ class Cli
                 main_menu
         end
     end
+
+
+    def exit 
+        @@current_user.update(balance: @@current_user[0].balance)
+    end 
 
     def login 
         system("clear")
@@ -124,7 +131,7 @@ class Cli
         end
         puts ""
         puts ""
-        puts "back to main menu y/n".green
+        puts "back to main menu y/n".green 
         i = 1
         while i < 5
             username1 = gets.chomp
@@ -155,6 +162,7 @@ class Cli
         puts ""
         display_user_hand
         user_turn
+
     end
    
     def shuffle_deck
@@ -285,6 +293,7 @@ class Cli
         if hand == @@user_hand
           @@user_img << new_card["image"]
         elsif hand == @@dealer_hand
+
           @@dealer_img << new_card["image"]
         end
     end
@@ -294,7 +303,8 @@ class Cli
         if @@current_user[0].balance <= 0
             system("clear")
             puts "Sorry you're out of money!".red
-            puts "beg for more money y/n".red
+
+            puts "beg for more money? y/n".red 
             i = 1
             while i < 5
                 no_money = gets.chomp
@@ -360,7 +370,7 @@ class Cli
         dealer_21
        end
         if score_in_hand(@@user_hand) < 21
-          puts "Type hit for another card  or stay to pass".green
+        puts "Type hit for another card  or stay to pass".green
           user_input = gets.chomp
           if user_input.downcase == "hit"
             system("clear")
@@ -396,7 +406,7 @@ class Cli
     def dealer_bust_payout
       system("clear")
       display_final_dealer_hand
-      puts "The deals is lame and sucks at blackjack so he busted".green
+      puts "The deals is lame and sucks at blackjack so he busted".green 
       @@current_user[0].balance += @@bet
       puts ""
       puts "You are rich and won $#{@@bet}. Your total balance is: $#{@@current_user[0].balance}".green 
@@ -421,7 +431,7 @@ class Cli
 
     def you_won_payout
       system("clear")
-      puts "YOU ROCK!".yellow
+      puts "YOU ROCK!".yellow 
       display_user_hand
       puts ""
       display_final_dealer_hand
@@ -487,7 +497,7 @@ class Cli
       display_final_dealer_hand
       new_balance = @@current_user[0].balance - @@bet 
       puts ""
-      puts "Your current balance is $#{@@current_user[0].balance}".green
+      puts "Your current balance is $#{@@current_user[0].balance}".green 
          @@current_user[0].balance = new_balance 
          puts "start a new game? y/n".green
          i = 1
@@ -510,14 +520,15 @@ class Cli
     
     def user_21
       system("clear")
-      puts "You got BLACKJACK!".blue
-      puts "You win double".green
+
+      puts "You got BLACKJACK!".blue 
+      puts "You win double".green 
       display_user_hand
       puts ""
       display_final_dealer_hand
       @@current_user[0].balance += (@@bet*2)
       puts ""
-      puts "You won $#{@@bet*2}. Your total is $#{@@current_user[0].balance}".green
+      puts "You won $#{@@bet*2}. Your total is $#{@@current_user[0].balance}".green 
       puts ""
       puts "start a new game? y/n".green
          i = 1
@@ -544,8 +555,9 @@ class Cli
       display_final_dealer_hand
       puts ""
       new_balance = @@current_user[0].balance - @@bet 
+
       puts ""
-      puts "Your current balance is $#{@@current_user[0].balance}".green
+      puts "Your current balance is $#{@@current_user[0].balance}".green 
          @@current_user[0].balance = new_balance 
          puts "start a new game? y/n".green
          i = 1
