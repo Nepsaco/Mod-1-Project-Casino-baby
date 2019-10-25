@@ -1,8 +1,6 @@
 require_relative './config/environment'
 require 'pry'
-require 'tty-prompt'
 
-prompt = TTY::Prompt.new
 
 class Cli 
 
@@ -162,7 +160,6 @@ class Cli
         puts ""
         display_user_hand
         user_turn
-
     end
    
     def shuffle_deck
@@ -579,16 +576,4 @@ class Cli
 
     end
 
-    # def find_index(card_string)
-      # @@user_hand.find_by(card_string)
-      # @@dealer_hand(card_string)
-    # end
-
-    def round 
-        user_turn
-        dealer_turn
-    end
 end
-# a = Cli.new
-# a.bust
-# a.score_in_hand(@@user_hand)
