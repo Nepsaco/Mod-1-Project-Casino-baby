@@ -1,8 +1,6 @@
 require_relative './config/environment'
 require 'pry'
-require 'tty-prompt'
 
-prompt = TTY::Prompt.new
 
 class Cli 
 
@@ -162,10 +160,7 @@ class Cli
         puts ""
         display_user_hand
         user_turn
-<<<<<<< HEAD
-=======
         # binding.pry
->>>>>>> a93705d3b2263254cf8816b0e4f9b5d6ed2170a3
     end
    
     def shuffle_deck
