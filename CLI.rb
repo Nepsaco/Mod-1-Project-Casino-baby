@@ -1,8 +1,6 @@
 require_relative './config/environment'
 require 'pry'
 
-
-
 class Cli 
 
     @@current_user = nil 
@@ -40,6 +38,7 @@ class Cli
                 main_menu
         end
     end
+
 
     def exit 
         @@current_user.update(balance: @@current_user[0].balance)
