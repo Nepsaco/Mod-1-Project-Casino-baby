@@ -1,5 +1,8 @@
 require_relative './config/environment'
 require 'pry'
+require 'tty-prompt'
+
+prompt = TTY::Prompt.new
 
 class Cli 
 
@@ -8,6 +11,8 @@ class Cli
     @@dealer_hand = []
     @@user_hand = []
     @@bet = 0 
+    @@dealer_img = []
+    @@user_img= []
 
     def welcome
         system("clear")
@@ -126,7 +131,7 @@ class Cli
         end
         puts ""
         puts ""
-        puts "back to main menu y/n"
+        puts "back to main menu y/n".green 
         i = 1
         while i < 5
             username1 = gets.chomp
@@ -157,6 +162,10 @@ class Cli
         puts ""
         display_user_hand
         user_turn
+<<<<<<< HEAD
+=======
+        # binding.pry
+>>>>>>> a93705d3b2263254cf8816b0e4f9b5d6ed2170a3
     end
    
     def shuffle_deck
@@ -173,15 +182,20 @@ class Cli
     def initial_deal_user
         card = deal_card 
         @@user_hand << card["cards"][0]["code"] 
+        @@user_img << card["cards"][0]["image"]
         card = deal_card
         @@user_hand << card["cards"][0]["code"] 
+        @@user_img << card["cards"][0]["image"]
     end 
 
     def initial_deal_dealer
         card = deal_card
         @@dealer_hand << card["cards"][0]["code"] 
+        @@dealer_img << card["cards"][0]["image"]
         card = deal_card
         @@dealer_hand << card["cards"][0]["code"] 
+        @@dealer_img << card["cards"][0]["image"]
+
     end
 
     def numeric?(lookAhead)
@@ -209,7 +223,7 @@ class Cli
         puts "Your Hand:"
         i = 0
         while i < @@user_hand.length
-            puts "#{@@user_hand[i]}"
+          system("imgcat #{@@user_img[i]}")
             i+= 1
         end
         card_total = score_in_hand(@@user_hand)
@@ -221,7 +235,7 @@ class Cli
         puts "Dealer Hand:"
         i = 1
         while i < @@dealer_hand.length
-            puts "#{@@dealer_hand[i]}" 
+            system("imgcat #{@@dealer_img[i]}")
             i +=1
         end
         card_total = dealer_score_showing
@@ -232,7 +246,7 @@ class Cli
         puts "DealerHand:"
         i = 0
         while i < @@dealer_hand.length
-            puts "#{@@dealer_hand[i]}"
+            system("imgcat #{@@dealer_img[i]}")
             i+= 1
         end
         card_total = score_in_hand(@@dealer_hand)
@@ -272,8 +286,13 @@ class Cli
     end
 
     def hit(hand)
-        new_card = deal_card["cards"][0]["code"]
-        new_hand = hand << new_card
+        new_card = deal_card["cards"][0]
+        new_hand = hand << new_card["code"]
+        if hand == @@user_hand
+          @@user_img << new_card["image"]
+        else
+          @@dealer_img << new_card["image"]
+        end
     end
 
 
@@ -281,8 +300,8 @@ class Cli
     def broke 
         if @@current_user[0].balance <= 0
             system("clear")
-            puts "Sorry you're out of money!"
-            puts "beg for more money? y/n"
+            puts "Sorry you're out of money!".red
+            puts "beg for more money? y/n".red 
             i = 1
             while i < 5
                 no_money = gets.chomp
@@ -307,11 +326,11 @@ class Cli
 
         def bust 
           system("clear")
-         puts "you busted, you lost #{@@bet}"
+         puts "you busted, you lost #{@@bet}".red 
          display_user_hand
          new_balance = @@current_user[0].balance - @@bet 
          @@current_user[0].balance = new_balance 
-         puts "Your current total is: $#{new_balance}"
+         puts "Your current total is: $#{new_balance}".green 
          puts "start a new game? y/n".green
          i = 1
          while i < 5
@@ -341,10 +360,11 @@ class Cli
         dealer_21
        end
         if score_in_hand(@@user_hand) < 21
-        puts "Type hit for another card  or stay to pass"
+        puts "Type hit for another card  or stay to pass".green
           user_input = gets.chomp
           if user_input.downcase == "hit"
             hit(@@user_hand)
+            display_dealer_hand
             display_user_hand
             user_turn
           elsif user_input.downcase == "stay"
@@ -363,7 +383,6 @@ class Cli
     def dealer_turn
       if score_in_hand(@@dealer_hand) < 17 
         hit(@@dealer_hand) 
-        display_dealer_hand
         dealer_turn
       elsif score_in_hand(@@dealer_hand) >=17 && score_in_hand(@@dealer_hand) <= 21
         display_final_dealer_hand
@@ -376,10 +395,11 @@ class Cli
 
     def dealer_bust_payout
       system("clear")
-      puts "The deals is lame and sucks at blackjack so he busted"
+      display_final_dealer_hand
+      puts "The deals is lame and sucks at blackjack so he busted".green 
       @@current_user[0].balance += @@bet
       puts ""
-      puts "You are rich and won $#{@@bet}. Your total balance is: $#{@@current_user[0].balance}" 
+      puts "You are rich and won $#{@@bet}. Your total balance is: $#{@@current_user[0].balance}".green 
       puts "start a new game? y/n".green
          i = 1
          while i < 5
@@ -401,13 +421,13 @@ class Cli
 
     def you_won_payout
       system("clear")
-      puts "YOU FUCKIN ROCK!"
+      puts "YOU ROCK!".yellow 
       display_user_hand
       puts ""
       display_final_dealer_hand
       @@current_user[0].balance += @@bet
       puts ""
-      puts "You won $#{@@bet}. Your total is $#{@@current_user[0].balance}"
+      puts "You won $#{@@bet}. Your total is $#{@@current_user[0].balance}".green
       puts ""
       puts "start a new game? y/n".green 
          i = 1
@@ -467,7 +487,7 @@ class Cli
       display_final_dealer_hand
       new_balance = @@current_user[0].balance - @@bet 
       puts ""
-      puts "Your current balance is $#{@@current_user[0].balance}"
+      puts "Your current balance is $#{@@current_user[0].balance}".green 
          @@current_user[0].balance = new_balance 
          puts "start a new game? y/n".green 
          i = 1
@@ -491,13 +511,13 @@ class Cli
     def user_21
       system("clear")
       puts "You got BLACKJACK!".blue 
-      puts "You win double"
+      puts "You win double".green 
       display_user_hand
       puts ""
       display_final_dealer_hand
       @@current_user[0].balance += (@@bet*2)
       puts ""
-      puts "You won $#{@@bet*2}. Your total is $#{@@current_user[0].balance}"
+      puts "You won $#{@@bet*2}. Your total is $#{@@current_user[0].balance}".green 
       puts ""
       puts "start a new game? y/n".green 
          i = 1
@@ -524,8 +544,9 @@ class Cli
       display_final_dealer_hand
       puts ""
       new_balance = @@current_user[0].balance - @@bet 
+
       puts ""
-      puts "Your current balance is $#{@@current_user[0].balance}"
+      puts "Your current balance is $#{@@current_user[0].balance}".green 
          @@current_user[0].balance = new_balance 
          puts "start a new game? y/n".green
          i = 1
@@ -546,6 +567,11 @@ class Cli
          end
 
     end
+
+    # def find_index(card_string)
+      # @@user_hand.find_by(card_string)
+      # @@dealer_hand(card_string)
+    # end
 
     def round 
         user_turn
