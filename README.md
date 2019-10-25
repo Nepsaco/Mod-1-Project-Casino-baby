@@ -17,3 +17,5 @@ Clone the project onto your device, then after cloning, run "bundle install".
 To run the program in your terminal (ITerm2): a) Go to the Mod1 folder you cloned. b) While in the Mod1 folder, run "ruby runner.rb" c) Enjoy! 
 
 P.s in this version of blackjack Aces are always 11. Sorry! 
+
+to view our video of the game go to https://youtu.be/It6gDdVmyKU 
